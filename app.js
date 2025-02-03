@@ -36,6 +36,7 @@ const transporter = nodemailer.createTransport({
 // Event Registration Endpoint
 app.post("/register", async (req, res) => {
   const { email, firstName, lastName, phone, attendanceType } = req.body;
+  const qrCodePath = path.join(__dirname, "assets", "qrcode.png");
 
   // Event Ticket Email Template
   const eventTicketTemplate = `
@@ -97,7 +98,9 @@ app.post("/register", async (req, res) => {
     <body>
         <div class="container">
             <h2>Your Ticket for SIC 2025</h2>
-            <div class="qr-code"><img src='[QR_CODE_URL]' alt='QR Code' style='width:150px;height:150px;'></div>
+            <div class="qr-code">
+                <img src="cid:qrcode" alt="QR Code" style="width:150px; height:150px; margin-bottom: 20px;">
+            </div>
             <div class="ticket-details">
                 <p><strong>Name:</strong> ${firstName} ${lastName}</p>
                 <p><strong>Email:</strong> ${email}</p>
@@ -151,6 +154,13 @@ app.post("/register", async (req, res) => {
       to: email,
       subject: "SIC Africa Event Registration Confirmation",
       html: eventTicketTemplate,
+      attachments: [
+        {
+          filename: "qrcode.png",
+          path: qrCodePath,
+          cid: "qrcode",
+        },
+      ],
     });
 
     // Send notification to admin
