@@ -317,6 +317,136 @@ app.post("/contact", async (req, res) => {
   }
 });
 
+// Newsletter Subscription Route
+app.post("/newsletter", async (req, res) => {
+  const { email } = req.body;
+
+  // Subscriber Email Template
+  const subscriberTemplate = `
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Welcome to SIC Africa Newsletter</title>
+      <style>
+        body {
+          font-family: Arial, sans-serif;
+          background-color: #f4f4f4;
+          color: #333;
+          margin: 0;
+          padding: 0;
+        }
+        .email-container {
+          max-width: 600px;
+          margin: 20px auto;
+          background: #ffffff;
+          border-radius: 8px;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+          background-color: #3855b3;
+          color: white;
+          text-align: center;
+          padding: 20px;
+          border-top-left-radius: 8px;
+          border-top-right-radius: 8px;
+        }
+        .body {
+          padding: 20px;
+          line-height: 1.6;
+        }
+        .footer {
+          background-color: #f4f4f4;
+          text-align: center;
+          padding: 15px;
+          font-size: 12px;
+          color: #666;
+          border-bottom-left-radius: 8px;
+          border-bottom-right-radius: 8px;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="email-container">
+        <div class="header">
+          <h1>Welcome to Our Newsletter!</h1>
+        </div>
+        <div class="body">
+          <p>Dear Subscriber,</p>
+          <p>Thank you for subscribing to the SIC Africa newsletter. You're now part of our community!</p>
+          <p>You'll receive updates about:</p>
+          <ul>
+            <li>Upcoming events and conferences</li>
+            <li>Industry insights and trends</li>
+            <li>Special announcements</li>
+            <li>Exclusive content</li>
+          </ul>
+          <p>Stay tuned for our next update!</p>
+          <p>Best regards,<br>SIC Africa Team</p>
+        </div>
+        <div class="footer">
+          <p>&copy; 2025 SIC Africa. All rights reserved.</p>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+
+  // Admin Notification Template
+  const adminNewsletterTemplate = `
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <title>New Newsletter Subscription</title>
+    </head>
+    <body>
+      <h2>New Newsletter Subscription</h2>
+      <p>A new user has subscribed to the SIC Africa newsletter.</p>
+      <p><strong>Email:</strong> ${email}</p>
+      <p><strong>Date:</strong> ${new Date().toLocaleDateString()}</p>
+    </body>
+    </html>
+  `;
+
+  try {
+    // Send welcome email to subscriber
+    const subscriberEmail = await transporter.sendMail({
+      from: "info@sic.africa",
+      to: email,
+      subject: "Welcome to SIC Africa Newsletter!",
+      html: subscriberTemplate,
+    });
+
+    // Send notification to admin
+    const adminNotification = await transporter.sendMail({
+      from: "info@sic.africa",
+      to: "info@sic.africa",
+      subject: "New Newsletter Subscription",
+      html: adminNewsletterTemplate,
+    });
+
+    console.log(
+      "Newsletter subscription emails sent:",
+      subscriberEmail.messageId,
+      adminNotification.messageId
+    );
+
+    res.status(200).send({
+      message: "Newsletter subscription successful",
+      status: 200,
+    });
+  } catch (error) {
+    console.error("Error processing newsletter subscription:", error);
+    res.status(500).send({
+      message: "Error subscribing to newsletter",
+      status: 500,
+      error: error.message,
+    });
+  }
+});
+
 // Root Route
 app.get("/", (req, res) => {
   res.send("SIC Africa Server is running ✨");
