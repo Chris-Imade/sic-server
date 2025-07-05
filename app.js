@@ -39,8 +39,7 @@ const mg = mailgun.client({
 
 // Event Registration Endpoint
 app.post("/register", async (req, res) => {
-  const { email, firstName, lastName, phone, gender, attendanceType } =
-    req.body;
+  const { email, firstName, lastName, phone, gender, ticket } = req.body;
   const qrCodePath = path.join(__dirname, "assets", "qrcode.png");
   const logoPath = path.join(__dirname, "assets", "logo.png");
 
@@ -182,7 +181,8 @@ app.post("/register", async (req, res) => {
       firstName,
       lastName,
       phone,
-      attendanceType,
+      gender,
+      attendanceType: ticket,
     });
     await newRegistration.save();
 
@@ -204,7 +204,7 @@ app.post("/register", async (req, res) => {
 
 // Existing Contact Route (with modifications)
 app.post("/contact", async (req, res) => {
-  const { name, phone, email, subject, comment } = req.body;
+  const { name, phone, email, subject, message } = req.body;
   const logoPath = path.join(__dirname, "assets", "logo.png");
 
   // Read the file for attachment
@@ -306,7 +306,7 @@ app.post("/contact", async (req, res) => {
       phone,
       email,
       subject,
-      comment,
+      comment: message,
     });
     await newContact.save();
 
