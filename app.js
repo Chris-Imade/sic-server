@@ -4,7 +4,6 @@ const Mailgun = require("mailgun.js");
 const dotenv = require("dotenv");
 const cors = require("cors");
 const path = require("path");
-const fs = require("fs");
 const connectDB = require("./config/database");
 const EventRegistration = require("./models/EventRegistration");
 const Contact = require("./models/Contact");
@@ -40,18 +39,6 @@ const mg = mailgun.client({
 // Event Registration Endpoint
 app.post("/register", async (req, res) => {
   const { email, firstName, lastName, phone, gender, ticket } = req.body;
-  const qrCodePath = path.join(__dirname, "assets", "qrcode.png");
-  const logoPath = path.join(__dirname, "assets", "logo.png");
-
-  // Read the files for attachment
-  const qrCodeAttachment = {
-    filename: "qrcode.png",
-    data: fs.readFileSync(qrCodePath),
-  };
-  const logoAttachment = {
-    filename: "logo.png",
-    data: fs.readFileSync(logoPath),
-  };
 
   // Event Ticket Email Template
   const eventTicketTemplate = `
@@ -112,10 +99,10 @@ app.post("/register", async (req, res) => {
     </head>
     <body>
         <div class="container">
-            <img src="cid:logo" alt="SIC Logo" style="width:150px; margin-bottom: 20px;">
+            <img src="https://sic.africa/images/cdn/logo.png" alt="SIC Logo" style="width:150px; margin-bottom: 20px;">
             <h2>Your Ticket for SIC 2025</h2>
             <div class="qr-code">
-                <img src="cid:qrcode" alt="QR Code" style="width:150px; height:150px; margin-bottom: 20px;">
+                <img src="https://sic.africa/images/cdn/qrcode.png" alt="QR Code" style="width:150px; height:150px; margin-bottom: 20px;">
             </div>
             <div class="ticket-details">
                 <p><strong>Name:</strong> ${firstName} ${lastName}</p>
@@ -171,8 +158,6 @@ app.post("/register", async (req, res) => {
       to: email,
       subject: "SIC Africa Event Registration Confirmation",
       html: eventTicketTemplate,
-      attachment: [qrCodeAttachment, logoAttachment],
-      inline: [qrCodeAttachment, logoAttachment],
     });
 
     // Save registration to database
@@ -205,13 +190,6 @@ app.post("/register", async (req, res) => {
 // Existing Contact Route (with modifications)
 app.post("/contact", async (req, res) => {
   const { name, phone, email, subject, message } = req.body;
-  const logoPath = path.join(__dirname, "assets", "logo.png");
-
-  // Read the file for attachment
-  const logoAttachment = {
-    filename: "logo.png",
-    data: fs.readFileSync(logoPath),
-  };
 
   // Admin Notification Template
   // const adminContactTemplate = `
@@ -281,7 +259,7 @@ app.post("/contact", async (req, res) => {
     <body>
       <div class="email-container">
         <div class="header">
-          <img src="cid:logo" alt="SIC Logo" style="width:150px; margin-bottom: 20px;">
+          <img src="https://sic.africa/images/cdn/logo.png" alt="SIC Logo" style="width:150px; margin-bottom: 20px;">
           <h1>Thank You for Reaching Out</h1>
         </div>
         <div class="body">
@@ -316,8 +294,6 @@ app.post("/contact", async (req, res) => {
       to: email,
       subject: "We Received Your Message",
       html: contactReplyTemplate,
-      attachment: [logoAttachment],
-      inline: [logoAttachment],
     });
 
     console.log("Contact email sent:", contactReply.id);
@@ -339,13 +315,6 @@ app.post("/contact", async (req, res) => {
 // Newsletter Subscription Route
 app.post("/newsletter", async (req, res) => {
   const { email } = req.body;
-  const logoPath = path.join(__dirname, "assets", "logo.png");
-
-  // Read the file for attachment
-  const logoAttachment = {
-    filename: "logo.png",
-    data: fs.readFileSync(logoPath),
-  };
 
   // Subscriber Email Template
   const subscriberTemplate = `
@@ -396,7 +365,7 @@ app.post("/newsletter", async (req, res) => {
     <body>
       <div class="email-container">
         <div class="header">
-          <img src="cid:logo" alt="SIC Logo" style="width:150px; margin-bottom: 20px;">
+          <img src="https://sic.africa/images/cdn/logo.png" alt="SIC Logo" style="width:150px; margin-bottom: 20px;">
           <h1>Welcome to Our Newsletter!</h1>
         </div>
         <div class="body">
@@ -446,8 +415,6 @@ app.post("/newsletter", async (req, res) => {
         to: email,
         subject: "Welcome to SIC Africa Newsletter!",
         html: subscriberTemplate,
-        attachment: [logoAttachment],
-        inline: [logoAttachment],
       }
     );
 
