@@ -272,7 +272,7 @@ app.post("/contact", async (req, res) => {
     <body>
       <div class="email-container">
         <div class="header">
-          <img src="https://sic.africa/images/cdn/logo.png" alt="SIC Logo" style="width:150px; margin-bottom: 20px;">
+          <img src="https://sic.africa/images/cdn/logo-white.png" alt="SIC Logo" style="width:150px; margin-bottom: 20px;">
           <h1>Thank You for Reaching Out</h1>
         </div>
         <div class="body">
