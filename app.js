@@ -4,6 +4,7 @@ const Mailgun = require("mailgun.js");
 const dotenv = require("dotenv");
 const cors = require("cors");
 const path = require("path");
+const fs = require("fs");
 const connectDB = require("./config/database");
 const EventRegistration = require("./models/EventRegistration");
 const Contact = require("./models/Contact");
@@ -42,6 +43,16 @@ app.post("/register", async (req, res) => {
     req.body;
   const qrCodePath = path.join(__dirname, "assets", "qrcode.png");
   const logoPath = path.join(__dirname, "assets", "logo.png");
+
+  // Read the files for attachment
+  const qrCodeAttachment = {
+    filename: "qrcode.png",
+    data: fs.readFileSync(qrCodePath),
+  };
+  const logoAttachment = {
+    filename: "logo.png",
+    data: fs.readFileSync(logoPath),
+  };
 
   // Event Ticket Email Template
   const eventTicketTemplate = `
@@ -161,16 +172,8 @@ app.post("/register", async (req, res) => {
       to: email,
       subject: "SIC Africa Event Registration Confirmation",
       html: eventTicketTemplate,
-      attachment: [
-        {
-          filename: "qrcode.png",
-          path: qrCodePath,
-        },
-        {
-          filename: "logo.png",
-          path: logoPath,
-        },
-      ],
+      attachment: [qrCodeAttachment, logoAttachment],
+      inline: [qrCodeAttachment, logoAttachment],
     });
 
     // Save registration to database
@@ -202,6 +205,13 @@ app.post("/register", async (req, res) => {
 // Existing Contact Route (with modifications)
 app.post("/contact", async (req, res) => {
   const { name, phone, email, subject, comment } = req.body;
+  const logoPath = path.join(__dirname, "assets", "logo.png");
+
+  // Read the file for attachment
+  const logoAttachment = {
+    filename: "logo.png",
+    data: fs.readFileSync(logoPath),
+  };
 
   // Admin Notification Template
   // const adminContactTemplate = `
@@ -306,12 +316,8 @@ app.post("/contact", async (req, res) => {
       to: email,
       subject: "We Received Your Message",
       html: contactReplyTemplate,
-      attachment: [
-        {
-          filename: "logo.png",
-          path: logoPath,
-        },
-      ],
+      attachment: [logoAttachment],
+      inline: [logoAttachment],
     });
 
     console.log("Contact email sent:", contactReply.id);
@@ -333,6 +339,13 @@ app.post("/contact", async (req, res) => {
 // Newsletter Subscription Route
 app.post("/newsletter", async (req, res) => {
   const { email } = req.body;
+  const logoPath = path.join(__dirname, "assets", "logo.png");
+
+  // Read the file for attachment
+  const logoAttachment = {
+    filename: "logo.png",
+    data: fs.readFileSync(logoPath),
+  };
 
   // Subscriber Email Template
   const subscriberTemplate = `
@@ -433,12 +446,8 @@ app.post("/newsletter", async (req, res) => {
         to: email,
         subject: "Welcome to SIC Africa Newsletter!",
         html: subscriberTemplate,
-        attachment: [
-          {
-            filename: "logo.png",
-            path: logoPath,
-          },
-        ],
+        attachment: [logoAttachment],
+        inline: [logoAttachment],
       }
     );
 
