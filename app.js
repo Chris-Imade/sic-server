@@ -55,6 +55,10 @@ app.post("/register", async (req, res) => {
                 margin: 0;
                 padding: 0;
             }
+            .banner-top {
+                background-color: #1e1f36;
+                padding: 20px 0;
+            }
             .container {
                 max-width: 600px;
                 margin: 20px auto;
@@ -91,13 +95,16 @@ app.post("/register", async (req, res) => {
                 color: #555;
             }
             .footer {
-                margin-top: 20px;
+                background-color: #1e1f36;
+                color: #ffffff;
+                padding: 20px;
+                text-align: center;
                 font-size: 12px;
-                color: #777;
             }
         </style>
     </head>
     <body>
+        <div class="banner-top"></div>
         <div class="container">
             <img src="https://sic.africa/images/cdn/logo.png" alt="SIC Logo" style="width:150px; margin-bottom: 20px;">
             <h2>Your Ticket for SIC 2025</h2>
@@ -124,9 +131,9 @@ app.post("/register", async (req, res) => {
                 <p>Present this ticket at the venue for entry.</p>
                 <p>For any inquiries, contact us at <a href="mailto:projects@cyan.academy">projects@cyan.academy</a></p>
             </div>
-            <div class="footer">
-                <p>&copy; 2025 Scale and Ideas Conference. All rights reserved.</p>
-            </div>
+        </div>
+        <div class="footer">
+            <p>&copy; 2025 Scale and Ideas Conference. All rights reserved.</p>
         </div>
     </body>
     </html>
@@ -179,6 +186,12 @@ app.post("/register", async (req, res) => {
     });
   } catch (error) {
     console.error("Error processing registration:", error);
+    if (error.code === 11000) {
+      return res.status(409).send({
+        message: "This email has already been registered.",
+        status: 409,
+      });
+    }
     res.status(500).send({
       message: "Error submitting registration",
       status: 500,
@@ -234,7 +247,7 @@ app.post("/contact", async (req, res) => {
           box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
         .header {
-          background-color: #3855b3;
+          background-color: #1e1f36;
           color: white;
           text-align: center;
           padding: 20px;
@@ -246,11 +259,11 @@ app.post("/contact", async (req, res) => {
           line-height: 1.6;
         }
         .footer {
-          background-color: #f4f4f4;
+          background-color: #1e1f36;
           text-align: center;
           padding: 15px;
           font-size: 12px;
-          color: #666;
+          color: #ffffff;
           border-bottom-left-radius: 8px;
           border-bottom-right-radius: 8px;
         }
@@ -304,6 +317,12 @@ app.post("/contact", async (req, res) => {
     });
   } catch (error) {
     console.error("Error sending contact emails:", error);
+    if (error.code === 11000) {
+      return res.status(409).send({
+        message: "This email has already been used.",
+        status: 409,
+      });
+    }
     res.status(500).send({
       message: "Error submitting contact form",
       status: 500,
@@ -340,7 +359,7 @@ app.post("/newsletter", async (req, res) => {
           box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
         .header {
-          background-color: #3855b3;
+          background-color: #1e1f36;
           color: white;
           text-align: center;
           padding: 20px;
@@ -352,11 +371,11 @@ app.post("/newsletter", async (req, res) => {
           line-height: 1.6;
         }
         .footer {
-          background-color: #f4f4f4;
+          background-color: #1e1f36;
           text-align: center;
           padding: 15px;
           font-size: 12px;
-          color: #666;
+          color: #ffffff;
           border-bottom-left-radius: 8px;
           border-bottom-right-radius: 8px;
         }
@@ -433,6 +452,12 @@ app.post("/newsletter", async (req, res) => {
     });
   } catch (error) {
     console.error("Error processing newsletter subscription:", error);
+    if (error.code === 11000) {
+      return res.status(409).send({
+        message: "This email is already subscribed.",
+        status: 409,
+      });
+    }
     res.status(500).send({
       message: "Error subscribing to newsletter",
       status: 500,
