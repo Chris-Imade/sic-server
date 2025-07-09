@@ -16,8 +16,14 @@ connectDB();
 
 const app = express();
 
+// View engine setup
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
+
+
 // Middleware
 app.use(cors({ origin: "*" }));
+app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json({ limit: "5mb" }));
 
@@ -470,6 +476,10 @@ app.post("/newsletter", async (req, res) => {
 app.get("/", (req, res) => {
   res.send("SIC Africa Server is running ✨");
 });
+
+// Report route
+const reportRouter = require("./routes/report");
+app.use("/report", reportRouter);
 
 // Error Handling Middleware
 app.use((err, req, res, next) => {

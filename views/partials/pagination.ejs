@@ -1,0 +1,13 @@
+<div class="pagination">
+    <% if (data.currentPage > 1) { %>
+        <a href="/report?page=<%= data.currentPage - 1 %>&model=<%= model %>">Previous</a>
+    <% } %>
+
+    <% for(let i = 1; i <= data.totalPages; i++) { %>
+        <a href="/report?page=<%= i %>&model=<%= model %>" class="<%= i === data.currentPage ? 'active' : '' %>"><%= i %></a>
+    <% } %>
+
+    <% if (data.currentPage < data.totalPages) { %>
+        <a href="/report?page=<%= data.currentPage + 1 %>&model=<%= model %>">Next</a>
+    <% } %>
+</div>
