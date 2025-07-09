@@ -11,9 +11,14 @@
 
     <div class="table-container">
         <div class="table-header">
-            <h2>Event Registrations</h2>
-            <a href="/report/download/eventRegistration" class="download-btn">Download CSV</a>
+            <h2>Event Registrations (<%= eventRegistrations.totalItems %>)</h2>
+            <% if (eventRegistrations.totalItems > 0) { %>
+                <a href="/report/download/eventRegistration" class="download-btn">Download CSV</a>
+            <% } %>
         </div>
+        <% if (eventRegistrations.totalItems === 0) { %>
+            <p>No records found.</p>
+        <% } else { %>
         <table>
             <thead>
                 <tr>
@@ -33,13 +38,19 @@
             </tbody>
         </table>
         <%- include('partials/pagination', { data: eventRegistrations, model: 'eventRegistration' }) %>
+        <% } %>
     </div>
 
     <div class="table-container">
         <div class="table-header">
-            <h2>Contacts</h2>
-            <a href="/report/download/contact" class="download-btn">Download CSV</a>
+            <h2>Contacts (<%= contacts.totalItems %>)</h2>
+            <% if (contacts.totalItems > 0) { %>
+                <a href="/report/download/contact" class="download-btn">Download CSV</a>
+            <% } %>
         </div>
+        <% if (contacts.totalItems === 0) { %>
+            <p>No records found.</p>
+        <% } else { %>
         <table>
             <thead>
                 <tr>
@@ -61,13 +72,19 @@
             </tbody>
         </table>
         <%- include('partials/pagination', { data: contacts, model: 'contact' }) %>
+        <% } %>
     </div>
 
     <div class="table-container">
         <div class="table-header">
-            <h2>Newsletter Subscriptions</h2>
-            <a href="/report/download/newsletter" class="download-btn">Download CSV</a>
+            <h2>Newsletter Subscriptions (<%= newsletters.totalItems %>)</h2>
+            <% if (newsletters.totalItems > 0) { %>
+                <a href="/report/download/newsletter" class="download-btn">Download CSV</a>
+            <% } %>
         </div>
+        <% if (newsletters.totalItems === 0) { %>
+            <p>No records found.</p>
+        <% } else { %>
         <table>
             <thead>
                 <tr>
@@ -85,6 +102,7 @@
             </tbody>
         </table>
         <%- include('partials/pagination', { data: newsletters, model: 'newsletter' }) %>
+        <% } %>
     </div>
 </body>
 </html>
