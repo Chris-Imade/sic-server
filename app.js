@@ -125,7 +125,7 @@ app.post("/register", async (req, res) => {
     Math.random() * 50
   )}${Math.floor(Math.random() * 50)}</p>
                 <p><strong>Event:</strong> Scale and Ideas Conference 2025</p>
-                <p><strong>Date:</strong> May 16-17, 2025</p>
+                <p><strong>Date:</strong> August 29th, 2025</p>
             </div>
             <div class="event-info">
                 <p>Present this ticket at the venue for entry.</p>
