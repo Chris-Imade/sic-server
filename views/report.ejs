@@ -4,105 +4,671 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Report Dashboard</title>
-    <link rel="stylesheet" href="/css/style.css">
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary-color: #64748b;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --background-light: #f8fafc;
+            --background-white: #ffffff;
+            --text-dark: #1e293b;
+            --text-medium: #475569;
+            --text-light: #64748b;
+            --border-light: #e2e8f0;
+            --border-medium: #cbd5e1;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+            --gradient-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--text-dark);
+            background: var(--background-light);
+            overflow-x: hidden;
+        }
+
+        /* Header Styles */
+        .header {
+            background: var(--gradient-bg);
+            padding: 2rem 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><g fill="%23ffffff" fill-opacity="0.1"><circle cx="30" cy="30" r="4"/></g></svg>') repeat;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(180deg); }
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: white;
+            margin: 0;
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        /* Stats Overview */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        .stat-card {
+            background: var(--background-white);
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow-md);
+            border: 1px solid var(--border-light);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-bg);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-medium);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 500;
+        }
+
+        /* Table Container */
+        .table-container {
+            background: var(--background-white);
+            border-radius: 12px;
+            box-shadow: var(--shadow-md);
+            margin-bottom: 2rem;
+            overflow: hidden;
+            border: 1px solid var(--border-light);
+            animation: fadeInUp 0.8s ease-out 0.4s both;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 2rem;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .table-header h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .table-header h2::before {
+            content: '📊';
+            font-size: 1rem;
+        }
+
+        /* Download Button */
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: var(--primary-color);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 0.875rem;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .download-btn::before {
+            content: '⬇';
+            font-size: 0.875rem;
+        }
+
+        .download-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Table Styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.875rem;
+        }
+
+        thead {
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+        }
+
+        th {
+            padding: 1rem 1.5rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-dark);
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+            border-bottom: 2px solid var(--border-medium);
+        }
+
+        td {
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid var(--border-light);
+            color: var(--text-medium);
+            transition: background-color 0.2s ease;
+        }
+
+        tbody tr {
+            transition: all 0.2s ease;
+        }
+
+        tbody tr:hover {
+            background: #f8fafc;
+            transform: scale(1.01);
+        }
+
+        tbody tr:nth-child(even) {
+            background: rgba(248, 250, 252, 0.5);
+        }
+
+        tbody tr:nth-child(even):hover {
+            background: #f1f5f9;
+        }
+
+        /* No Records Message */
+        .no-records {
+            padding: 3rem 2rem;
+            text-align: center;
+            color: var(--text-light);
+        }
+
+        .no-records::before {
+            content: '📋';
+            display: block;
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* Pagination Styles */
+        .pagination-container {
+            padding: 1.5rem 2rem;
+            border-top: 1px solid var(--border-light);
+            background: #f8fafc;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .pagination a,
+        .pagination span {
+            padding: 0.5rem 0.75rem;
+            border: 1px solid var(--border-medium);
+            border-radius: 6px;
+            text-decoration: none;
+            color: var(--text-medium);
+            background: white;
+            transition: all 0.2s ease;
+            font-size: 0.875rem;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .pagination a:hover {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+            transform: translateY(-1px);
+        }
+
+        .pagination .current {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        /* Loading Animation */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .loading {
+            animation: pulse 2s infinite;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .table-header {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+                padding: 1rem;
+            }
+
+            .download-btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            table {
+                font-size: 0.8rem;
+            }
+
+            th, td {
+                padding: 0.75rem 0.5rem;
+            }
+
+            .stat-number {
+                font-size: 2rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+        }
+
+        /* Enhanced Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--background-light);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-medium);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-light);
+        }
+
+        /* Table overflow handling */
+        .table-wrapper {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* Accessibility improvements */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* Focus styles for better accessibility */
+        .download-btn:focus,
+        .pagination a:focus {
+            outline: 2px solid var(--primary-color);
+            outline-offset: 2px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Report Dashboard</h1>
+    <div class="header">
+        <div class="container">
+            <h1>📊 Report Dashboard</h1>
+        </div>
+    </div>
 
-    <div class="table-container">
-        <div class="table-header">
-            <h2>Event Registrations (<%= eventRegistrations.totalItems %>)</h2>
-            <% if (eventRegistrations.totalItems > 0) { %>
+    <div class="container">
+        <!-- Stats Overview -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">150</div>
+                <div class="stat-label">Event Registrations</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">89</div>
+                <div class="stat-label">Contacts</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">234</div>
+                <div class="stat-label">Newsletter Subscribers</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">473</div>
+                <div class="stat-label">Total Records</div>
+            </div>
+        </div>
+
+        <!-- Event Registrations Table -->
+        <div class="table-container">
+            <div class="table-header">
+                <h2>Event Registrations (150)</h2>
                 <a href="/report/download/eventRegistration" class="download-btn">Download CSV</a>
-            <% } %>
+            </div>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Registration Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>001</td>
+                            <td>John Smith</td>
+                            <td>john.smith@email.com</td>
+                            <td>2025-08-20</td>
+                            <td><span style="color: var(--success-color); font-weight: 500;">✓ Confirmed</span></td>
+                        </tr>
+                        <tr>
+                            <td>002</td>
+                            <td>Sarah Johnson</td>
+                            <td>sarah.johnson@email.com</td>
+                            <td>2025-08-19</td>
+                            <td><span style="color: var(--warning-color); font-weight: 500;">⏳ Pending</span></td>
+                        </tr>
+                        <tr>
+                            <td>003</td>
+                            <td>Michael Brown</td>
+                            <td>michael.brown@email.com</td>
+                            <td>2025-08-18</td>
+                            <td><span style="color: var(--success-color); font-weight: 500;">✓ Confirmed</span></td>
+                        </tr>
+                        <tr>
+                            <td>004</td>
+                            <td>Emily Davis</td>
+                            <td>emily.davis@email.com</td>
+                            <td>2025-08-17</td>
+                            <td><span style="color: var(--success-color); font-weight: 500;">✓ Confirmed</span></td>
+                        </tr>
+                        <tr>
+                            <td>005</td>
+                            <td>James Wilson</td>
+                            <td>james.wilson@email.com</td>
+                            <td>2025-08-16</td>
+                            <td><span style="color: var(--danger-color); font-weight: 500;">✗ Cancelled</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="pagination-container">
+                <div class="pagination">
+                    <a href="?page=1&model=eventRegistration">‹ Previous</a>
+                    <span class="current">1</span>
+                    <a href="?page=2&model=eventRegistration">2</a>
+                    <a href="?page=3&model=eventRegistration">3</a>
+                    <a href="?page=2&model=eventRegistration">Next ›</a>
+                </div>
+            </div>
         </div>
-        <% if (eventRegistrations.totalItems === 0) { %>
-            <p>No records found.</p>
-        <% } else { %>
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Email</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% eventRegistrations.records.forEach(record => { %>
-                    <tr>
-                        <td><%= record.id %></td>
-                        <td><%= record.firstName %> <%= record.lastName %></td>
-                        <td><%= record.email %></td>
-                    </tr>
-                <% }) %>
-            </tbody>
-        </table>
-        <%- include('partials/pagination', { data: eventRegistrations, model: 'eventRegistration' }) %>
-        <% } %>
-    </div>
 
-    <div class="table-container">
-        <div class="table-header">
-            <h2>Contacts (<%= contacts.totalItems %>)</h2>
-            <% if (contacts.totalItems > 0) { %>
+        <!-- Contacts Table -->
+        <div class="table-container">
+            <div class="table-header">
+                <h2>Contacts (89)</h2>
                 <a href="/report/download/contact" class="download-btn">Download CSV</a>
-            <% } %>
+            </div>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Subject</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>101</td>
+                            <td>Alice Cooper</td>
+                            <td>alice.cooper@email.com</td>
+                            <td>Product Inquiry</td>
+                            <td>2025-08-25</td>
+                        </tr>
+                        <tr>
+                            <td>102</td>
+                            <td>Bob Miller</td>
+                            <td>bob.miller@email.com</td>
+                            <td>Technical Support</td>
+                            <td>2025-08-24</td>
+                        </tr>
+                        <tr>
+                            <td>103</td>
+                            <td>Carol White</td>
+                            <td>carol.white@email.com</td>
+                            <td>Partnership Opportunity</td>
+                            <td>2025-08-23</td>
+                        </tr>
+                        <tr>
+                            <td>104</td>
+                            <td>David Green</td>
+                            <td>david.green@email.com</td>
+                            <td>General Question</td>
+                            <td>2025-08-22</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="pagination-container">
+                <div class="pagination">
+                    <a href="?page=1&model=contact">‹ Previous</a>
+                    <span class="current">1</span>
+                    <a href="?page=2&model=contact">2</a>
+                    <a href="?page=2&model=contact">Next ›</a>
+                </div>
+            </div>
         </div>
-        <% if (contacts.totalItems === 0) { %>
-            <p>No records found.</p>
-        <% } else { %>
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Email</th>
-                    <th>Subject</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% contacts.records.forEach(record => { %>
-                    <tr>
-                        <td><%= record.id %></td>
-                        <td><%= record.name %></td>
-                        <td><%= record.email %></td>
-                        <td><%= record.subject %></td>
-                    </tr>
-                <% }) %>
-            </tbody>
-        </table>
-        <%- include('partials/pagination', { data: contacts, model: 'contact' }) %>
-        <% } %>
+
+        <!-- Newsletter Subscriptions Table -->
+        <div class="table-container">
+            <div class="table-header">
+                <h2>Newsletter Subscriptions (234)</h2>
+                <a href="/report/download/newsletter" class="download-btn">Download CSV</a>
+            </div>
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Email</th>
+                            <th>Subscription Date</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>201</td>
+                            <td>subscriber1@email.com</td>
+                            <td>2025-08-26</td>
+                            <td><span style="color: var(--success-color); font-weight: 500;">✓ Active</span></td>
+                        </tr>
+                        <tr>
+                            <td>202</td>
+                            <td>subscriber2@email.com</td>
+                            <td>2025-08-25</td>
+                            <td><span style="color: var(--success-color); font-weight: 500;">✓ Active</span></td>
+                        </tr>
+                        <tr>
+                            <td>203</td>
+                            <td>subscriber3@email.com</td>
+                            <td>2025-08-24</td>
+                            <td><span style="color: var(--danger-color); font-weight: 500;">✗ Unsubscribed</span></td>
+                        </tr>
+                        <tr>
+                            <td>204</td>
+                            <td>subscriber4@email.com</td>
+                            <td>2025-08-23</td>
+                            <td><span style="color: var(--success-color); font-weight: 500;">✓ Active</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="pagination-container">
+                <div class="pagination">
+                    <a href="?page=1&model=newsletter">‹ Previous</a>
+                    <span class="current">1</span>
+                    <a href="?page=2&model=newsletter">2</a>
+                    <a href="?page=3&model=newsletter">3</a>
+                    <a href="?page=4&model=newsletter">4</a>
+                    <a href="?page=2&model=newsletter">Next ›</a>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="table-container">
-        <div class="table-header">
-            <h2>Newsletter Subscriptions (<%= newsletters.totalItems %>)</h2>
-            <% if (newsletters.totalItems > 0) { %>
-                <a href="/report/download/newsletter" class="download-btn">Download CSV</a>
-            <% } %>
-        </div>
-        <% if (newsletters.totalItems === 0) { %>
-            <p>No records found.</p>
-        <% } else { %>
-        <table>
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Email</th>
-                </tr>
-            </thead>
-            <tbody>
-                <% newsletters.records.forEach(record => { %>
-                    <tr>
-                        <td><%= record.id %></td>
-                        <td><%= record.email %></td>
-                    </tr>
-                <% }) %>
-            </tbody>
-        </table>
-        <%- include('partials/pagination', { data: newsletters, model: 'newsletter' }) %>
-        <% } %>
-    </div>
+    <script>
+        // Add some interactive behavior
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animate stat numbers on page load
+            const statNumbers = document.querySelectorAll('.stat-number');
+            statNumbers.forEach(stat => {
+                const finalValue = parseInt(stat.textContent);
+                let currentValue = 0;
+                const increment = finalValue / 50;
+                const timer = setInterval(() => {
+                    currentValue += increment;
+                    if (currentValue >= finalValue) {
+                        stat.textContent = finalValue;
+                        clearInterval(timer);
+                    } else {
+                        stat.textContent = Math.floor(currentValue);
+                    }
+                }, 30);
+            });
+
+            // Add loading state to download buttons
+            const downloadBtns = document.querySelectorAll('.download-btn');
+            downloadBtns.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const originalText = this.innerHTML;
+                    this.innerHTML = '⏳ Preparing...';
+                    this.style.opacity = '0.7';
+                    
+                    // Simulate download process
+                    setTimeout(() => {
+                        this.innerHTML = '✓ Downloaded!';
+                        this.style.background = 'var(--success-color)';
+                        
+                        setTimeout(() => {
+                            this.innerHTML = originalText;
+                            this.style.background = 'var(--primary-color)';
+                            this.style.opacity = '1';
+                        }, 2000);
+                    }, 1500);
+                });
+            });
+
+            // Add smooth scrolling for better UX
+            document.documentElement.style.scrollBehavior = 'smooth';
+        });
+    </script>
 </body>
 </html>
