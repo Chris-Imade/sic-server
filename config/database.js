@@ -13,10 +13,12 @@ const connectDB = async () => {
     );
 
     const conn = await mongoose.connect(mongoURI, {
-      // useNewUrlParser: true,
-      // useUnifiedTopology: true,
-      serverSelectionTimeoutMS: 5000,
-      socketTimeoutMS: 45000,
+      serverSelectionTimeoutMS: 10000,  // Increased from 5000
+      socketTimeoutMS: 60000,           // Increased from 45000
+      connectTimeoutMS: 10000,          // Added explicit connection timeout
+      maxPoolSize: 10,                  // Maximum number of connections in the connection pool
+      retryWrites: true,                // Enable retryable writes
+      retryReads: true,                 // Enable retryable reads
     });
 
     logger.info(
