@@ -423,19 +423,19 @@
         <!-- Stats Overview -->
         <div class="stats-grid">
             <div class="stat-card">
-                <div class="stat-number">150</div>
+                <div class="stat-number" id="eventRegistrationsCount"><%= eventRegistrations.totalItems %></div>
                 <div class="stat-label">Event Registrations</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number">89</div>
+                <div class="stat-number" id="contactsCount"><%= contacts.totalItems %></div>
                 <div class="stat-label">Contacts</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number">234</div>
+                <div class="stat-number" id="newslettersCount"><%= newsletters.totalItems %></div>
                 <div class="stat-label">Newsletter Subscribers</div>
             </div>
             <div class="stat-card">
-                <div class="stat-number">473</div>
+                <div class="stat-number" id="totalRecords"><%= eventRegistrations.totalItems + contacts.totalItems + newsletters.totalItems %></div>
                 <div class="stat-label">Total Records</div>
             </div>
         </div>
@@ -443,7 +443,7 @@
         <!-- Event Registrations Table -->
         <div class="table-container">
             <div class="table-header">
-                <h2>Event Registrations (150)</h2>
+                <h2>Event Registrations (<%= eventRegistrations.totalItems %>)</h2>
                 <a href="/report/download/eventRegistration" class="download-btn">Download CSV</a>
             </div>
             <div class="table-wrapper">
@@ -458,51 +458,35 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>001</td>
-                            <td>John Smith</td>
-                            <td>john.smith@email.com</td>
-                            <td>2025-08-20</td>
-                            <td><span style="color: var(--success-color); font-weight: 500;">✓ Confirmed</span></td>
-                        </tr>
-                        <tr>
-                            <td>002</td>
-                            <td>Sarah Johnson</td>
-                            <td>sarah.johnson@email.com</td>
-                            <td>2025-08-19</td>
-                            <td><span style="color: var(--warning-color); font-weight: 500;">⏳ Pending</span></td>
-                        </tr>
-                        <tr>
-                            <td>003</td>
-                            <td>Michael Brown</td>
-                            <td>michael.brown@email.com</td>
-                            <td>2025-08-18</td>
-                            <td><span style="color: var(--success-color); font-weight: 500;">✓ Confirmed</span></td>
-                        </tr>
-                        <tr>
-                            <td>004</td>
-                            <td>Emily Davis</td>
-                            <td>emily.davis@email.com</td>
-                            <td>2025-08-17</td>
-                            <td><span style="color: var(--success-color); font-weight: 500;">✓ Confirmed</span></td>
-                        </tr>
-                        <tr>
-                            <td>005</td>
-                            <td>James Wilson</td>
-                            <td>james.wilson@email.com</td>
-                            <td>2025-08-16</td>
-                            <td><span style="color: var(--danger-color); font-weight: 500;">✗ Cancelled</span></td>
-                        </tr>
+                        <% eventRegistrations.records.forEach(record => { %>
+                            <tr>
+                                <td><%= record._id %></td>
+                                <td><%= record.firstName %> <%= record.lastName %></td>
+                                <td><%= record.email %></td>
+                                <td><%= new Date(record.createdAt).toLocaleDateString() %></td>
+                                <td><span style="color: var(--success-color); font-weight: 500;">✓ Confirmed</span></td>
+                            </tr>
+                        <% }) %>
                     </tbody>
                 </table>
             </div>
             <div class="pagination-container">
                 <div class="pagination">
-                    <a href="?page=1&model=eventRegistration">‹ Previous</a>
-                    <span class="current">1</span>
-                    <a href="?page=2&model=eventRegistration">2</a>
-                    <a href="?page=3&model=eventRegistration">3</a>
-                    <a href="?page=2&model=eventRegistration">Next ›</a>
+                    <% if (eventRegistrations.currentPage > 1) { %>
+                        <a href="?page=<%= eventRegistrations.currentPage - 1 %>&model=eventRegistration">‹ Previous</a>
+                    <% } %>
+                    
+                    <% for (let i = 1; i <= eventRegistrations.totalPages; i++) { %>
+                        <% if (i === eventRegistrations.currentPage) { %>
+                            <span class="current"><%= i %></span>
+                        <% } else { %>
+                            <a href="?page=<%= i %>&model=eventRegistration"><%= i %></a>
+                        <% } %>
+                    <% } %>
+                    
+                    <% if (eventRegistrations.currentPage < eventRegistrations.totalPages) { %>
+                        <a href="?page=<%= eventRegistrations.currentPage + 1 %>&model=eventRegistration">Next ›</a>
+                    <% } %>
                 </div>
             </div>
         </div>
@@ -513,6 +497,11 @@
                 <h2>Contacts (89)</h2>
                 <a href="/report/download/contact" class="download-btn">Download CSV</a>
             </div>
+            <% if (contacts.totalItems === 0) { %>
+                <div class="no-records">
+                    <div>No contacts found</div>
+                </div>
+            <% } else { %>
             <div class="table-wrapper">
                 <table>
                     <thead>
@@ -525,53 +514,53 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>101</td>
-                            <td>Alice Cooper</td>
-                            <td>alice.cooper@email.com</td>
-                            <td>Product Inquiry</td>
-                            <td>2025-08-25</td>
-                        </tr>
-                        <tr>
-                            <td>102</td>
-                            <td>Bob Miller</td>
-                            <td>bob.miller@email.com</td>
-                            <td>Technical Support</td>
-                            <td>2025-08-24</td>
-                        </tr>
-                        <tr>
-                            <td>103</td>
-                            <td>Carol White</td>
-                            <td>carol.white@email.com</td>
-                            <td>Partnership Opportunity</td>
-                            <td>2025-08-23</td>
-                        </tr>
-                        <tr>
-                            <td>104</td>
-                            <td>David Green</td>
-                            <td>david.green@email.com</td>
-                            <td>General Question</td>
-                            <td>2025-08-22</td>
-                        </tr>
+                        <% contacts.records.forEach(record => { %>
+                            <tr>
+                                <td><%= record._id %></td>
+                                <td><%= record.name %></td>
+                                <td><%= record.email %></td>
+                                <td><%= record.subject %></td>
+                                <td><%= new Date(record.createdAt).toLocaleDateString() %></td>
+                            </tr>
+                        <% }) %>
                     </tbody>
                 </table>
             </div>
             <div class="pagination-container">
                 <div class="pagination">
-                    <a href="?page=1&model=contact">‹ Previous</a>
-                    <span class="current">1</span>
-                    <a href="?page=2&model=contact">2</a>
-                    <a href="?page=2&model=contact">Next ›</a>
+                    <% if (contacts.currentPage > 1) { %>
+                        <a href="?page=<%= contacts.currentPage - 1 %>&model=contact">‹ Previous</a>
+                    <% } %>
+                    
+                    <% for (let i = 1; i <= contacts.totalPages; i++) { %>
+                        <% if (i === contacts.currentPage) { %>
+                            <span class="current"><%= i %></span>
+                        <% } else { %>
+                            <a href="?page=<%= i %>&model=contact"><%= i %></a>
+                        <% } %>
+                    <% } %>
+                    
+                    <% if (contacts.currentPage < contacts.totalPages) { %>
+                        <a href="?page=<%= contacts.currentPage + 1 %>&model=contact">Next ›</a>
+                    <% } %>
                 </div>
             </div>
+            <% } %>
         </div>
 
         <!-- Newsletter Subscriptions Table -->
         <div class="table-container">
             <div class="table-header">
-                <h2>Newsletter Subscriptions (234)</h2>
-                <a href="/report/download/newsletter" class="download-btn">Download CSV</a>
+                <h2>Newsletter Subscriptions (<%= newsletters.totalItems %>)</h2>
+                <% if (newsletters.totalItems > 0) { %>
+                    <a href="/report/download/newsletter" class="download-btn">Download CSV</a>
+                <% } %>
             </div>
+            <% if (newsletters.totalItems === 0) { %>
+                <div class="no-records">
+                    <div>No newsletter subscriptions found</div>
+                </div>
+            <% } else { %>
             <div class="table-wrapper">
                 <table>
                     <thead>
@@ -583,41 +572,34 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>201</td>
-                            <td>subscriber1@email.com</td>
-                            <td>2025-08-26</td>
-                            <td><span style="color: var(--success-color); font-weight: 500;">✓ Active</span></td>
-                        </tr>
-                        <tr>
-                            <td>202</td>
-                            <td>subscriber2@email.com</td>
-                            <td>2025-08-25</td>
-                            <td><span style="color: var(--success-color); font-weight: 500;">✓ Active</span></td>
-                        </tr>
-                        <tr>
-                            <td>203</td>
-                            <td>subscriber3@email.com</td>
-                            <td>2025-08-24</td>
-                            <td><span style="color: var(--danger-color); font-weight: 500;">✗ Unsubscribed</span></td>
-                        </tr>
-                        <tr>
-                            <td>204</td>
-                            <td>subscriber4@email.com</td>
-                            <td>2025-08-23</td>
-                            <td><span style="color: var(--success-color); font-weight: 500;">✓ Active</span></td>
-                        </tr>
+                        <% newsletters.records.forEach(record => { %>
+                            <tr>
+                                <td><%= record._id %></td>
+                                <td><%= record.email %></td>
+                                <td><%= new Date(record.createdAt).toLocaleDateString() %></td>
+                                <td><span style="color: var(--success-color); font-weight: 500;">✓ Subscribed</span></td>
+                            </tr>
+                        <% }) %>
                     </tbody>
                 </table>
             </div>
             <div class="pagination-container">
                 <div class="pagination">
-                    <a href="?page=1&model=newsletter">‹ Previous</a>
-                    <span class="current">1</span>
-                    <a href="?page=2&model=newsletter">2</a>
-                    <a href="?page=3&model=newsletter">3</a>
-                    <a href="?page=4&model=newsletter">4</a>
-                    <a href="?page=2&model=newsletter">Next ›</a>
+                    <% if (newsletters.currentPage > 1) { %>
+                        <a href="?page=<%= newsletters.currentPage - 1 %>&model=newsletter">‹ Previous</a>
+                    <% } %>
+                    
+                    <% for (let i = 1; i <= newsletters.totalPages; i++) { %>
+                        <% if (i === newsletters.currentPage) { %>
+                            <span class="current"><%= i %></span>
+                        <% } else { %>
+                            <a href="?page=<%= i %>&model=newsletter"><%= i %></a>
+                        <% } %>
+                    <% } %>
+                    
+                    <% if (newsletters.currentPage < newsletters.totalPages) { %>
+                        <a href="?page=<%= newsletters.currentPage + 1 %>&model=newsletter">Next ›</a>
+                    <% } %>
                 </div>
             </div>
         </div>
