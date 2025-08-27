@@ -611,45 +611,50 @@
             // Animate stat numbers on page load
             const statNumbers = document.querySelectorAll('.stat-number');
             statNumbers.forEach(stat => {
-                const finalValue = parseInt(stat.textContent);
+                const finalValue = parseInt(stat.textContent.replace(/,/g, '')) || 0;
                 let currentValue = 0;
-                const increment = finalValue / 50;
-                const timer = setInterval(() => {
-                    currentValue += increment;
-                    if (currentValue >= finalValue) {
-                        stat.textContent = finalValue;
-                        clearInterval(timer);
-                    } else {
-                        stat.textContent = Math.floor(currentValue);
-                    }
-                }, 30);
+                const increment = Math.max(1, Math.floor(finalValue / 50));
+                
+                if (finalValue > 0) {
+                    const timer = setInterval(() => {
+                        currentValue += increment;
+                        if (currentValue >= finalValue) {
+                            stat.textContent = finalValue.toLocaleString();
+                            clearInterval(timer);
+                        } else {
+                            stat.textContent = Math.floor(currentValue).toLocaleString();
+                        }
+                    }, 30);
+                }
             });
 
             // Add loading state to download buttons
             const downloadBtns = document.querySelectorAll('.download-btn');
             downloadBtns.forEach(btn => {
                 btn.addEventListener('click', function(e) {
-                    e.preventDefault();
                     const originalText = this.innerHTML;
                     this.innerHTML = '⏳ Preparing...';
                     this.style.opacity = '0.7';
                     
-                    // Simulate download process
+                    // Allow the download to proceed after a short delay
                     setTimeout(() => {
-                        this.innerHTML = '✓ Downloaded!';
-                        this.style.background = 'var(--success-color)';
+                        // Reset the button state
+                        this.innerHTML = originalText;
+                        this.style.opacity = '1';
                         
-                        setTimeout(() => {
-                            this.innerHTML = originalText;
-                            this.style.background = 'var(--primary-color)';
-                            this.style.opacity = '1';
-                        }, 2000);
-                    }, 1500);
+                        // Let the default download action proceed
+                        window.location.href = this.href;
+                    }, 500);
+                    
+                    // Prevent default only after setting up the timeout
+                    e.preventDefault();
                 });
             });
 
             // Add smooth scrolling for better UX
-            document.documentElement.style.scrollBehavior = 'smooth';
+            if ('scrollBehavior' in document.documentElement.style) {
+                document.documentElement.style.scrollBehavior = 'smooth';
+            }
         });
     </script>
 </body>
